@@ -26,18 +26,19 @@ echo 'done.'
 
 # Plugins
 _csv_get_column() {
-  cut -d ',' -f $2 <<< $1
+  # shellcheck disable=SC2086
+  cut -d ',' -f "$2" <<< $1
 }
 IS_HEADER=0
-while read LINE; do
+while read -r LINE; do
   [ "$IS_HEADER" -eq 0 ] && IS_HEADER=1 && continue
 
-  ID="$(_csv_get_column $LINE 1)"
-  URL="$(_csv_get_column $LINE 2)"
-  NAME="$(_csv_get_column $LINE 3)"
+  ID=$(_csv_get_column "$LINE" 1)
+  URL=$(_csv_get_column "$LINE" 2)
+  NAME=$(_csv_get_column "$LINE" 3)
 
   echo -n "Installing $NAME.. "
-  git clone $URL "$OMZ_CUSTOM_FOLDER/plugins/$ID" &>> install.log
+  git clone "$URL" "$OMZ_CUSTOM_FOLDER/plugins/$ID" &>> install.log
   echo -n 'enabling it.. '
   sed -i "s/\(plugins=(git\)*)/\1 $ID)/" "$ZSHRC"
   echo 'done.'
@@ -54,6 +55,7 @@ echo 'done.'
 
 # Shell
 echo -n 'Setting zsh as the default shell.. '
+# shellcheck disable=SC2024
 sudo usermod --shell "$(which zsh)" "$USER" &>> install.log
 echo 'done.'
 
