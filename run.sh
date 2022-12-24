@@ -28,7 +28,10 @@ echo 'done.'
 _csv_get_column() {
   cut -d ',' -f $2 <<< $1
 }
+IS_HEADER=0
 while read LINE; do
+  [ "$IS_HEADER" -eq 0 ] && IS_HEADER=1 && continue
+
   ID="$(_csv_get_column $LINE 1)"
   URL="$(_csv_get_column $LINE 2)"
   NAME="$(_csv_get_column $LINE 3)"
